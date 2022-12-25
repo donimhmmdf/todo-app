@@ -1,26 +1,31 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <HelloWorld :label="label" :user="user" />
+  <button @click="changeName">change</button>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import { reactive, ref } from "@vue/reactivity";
+import HelloWorld from "./components/HelloWorld.vue";
 export default {
-  name: 'App',
   components: {
-    HelloWorld
-  }
-}
+    HelloWorld,
+  },
+  setup() {
+    const label = ref("Biodata");
+    const user = reactive({
+      name: "agus",
+      age: 24,
+    });
+    const changeName = () => {
+      user.name = "asep";
+    };
+    return {
+      label,
+      user,
+      changeName,
+    };
+  },
+};
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+<style></style>
