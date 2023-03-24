@@ -3,75 +3,80 @@
     <h2 class="text-lg font-bold mb-4">Todo Application</h2>
     <div class="flex w-full">
       <input
-        @keyup.enter="addTodo"
+        @keyup.enter="add"
         v-model="todo"
         type="text"
         class="p-2 w-full rounded-md mr-1 border border-gray-300 bg-gray-50"
       />
       <button
-        @click="addTodo"
+        @click="add"
         class="py-2 px-3 bg-green-500 rounded-md text-white font-medium"
       >
         ADD
       </button>
     </div>
-    <List :todos="todos" @deleteTodo="deleteTodo" @doneTodo="doneTodo" />
+    <List :todos="list" @deleteTodo="deleteTodo" @doneTodo="doneTodo" />
     <small>Total TODO : {{ totalTodo }}</small>
   </div>
-  <footer class="w-full fixed left-0 bottom-0 text-center text-sm">
-    © Copyright 2022
-  </footer>
 </template>
 
 <script>
+import { ref, reactive, onMounted, computed, toRefs } from "vue";
 import List from "./components/List.vue";
 export default {
-  data() {
-    return {
-      todo: "",
-      todos: [],
-    };
-  },
-  mounted() {
-    this.todos = JSON.parse(localStorage.getItem("todos"));
-  },
-  computed: {
-    totalTodo() {
-      return this.todos.length;
-    },
-  },
   components: {
     List,
   },
-  methods: {
-    addTodo() {
-      this.todos.unshift({
-        activity: this.todo,
+  setup() {
+    const todo = ref("");
+    const todos = reactive({
+      list: [],
+    });
+
+    onMounted(() => {
+      const items = localStorage.getItem("todos");
+      todos.list = items ? JSON.parse(items) : [];
+    });
+    const totalTodo = computed(() => {
+      return todos.list.length;
+    });
+    const add = () => {
+      todos.list.unshift({
+        activity: todo.value,
         isDone: false,
       });
-      this.todo = "";
-      this.saveToLocalStorage();
-    },
-    deleteTodo(todoIndex) {
-      this.todos = this.todos.filter((item, index) => {
+      todo.value = "";
+      saveToLocalStorage();
+    };
+    const deleteTodo = (todoIndex) => {
+      todos.list = todos.list.filter((item, index) => {
         if (index != todoIndex) {
           return item;
         }
       });
-      this.saveToLocalStorage();
-    },
-    doneTodo(todoIndex) {
-      this.todos = this.todos.filter((item, index) => {
+      saveToLocalStorage();
+    };
+    const doneTodo = (todoIndex) => {
+      todos.list = todos.list.filter((item, index) => {
         if (index == todoIndex) {
           item.isDone = true;
         }
         return item;
       });
-      this.saveToLocalStorage();
-    },
-    saveToLocalStorage() {
-      localStorage.setItem("todos", JSON.stringify(this.todos));
-    },
+      saveToLocalStorage();
+    };
+    const saveToLocalStorage = () => {
+      localStorage.setItem("todos", JSON.stringify(todos.list));
+    };
+    return {
+      todo,
+      ...toRefs(todos),
+      totalTodo,
+      add,
+      deleteTodo,
+      doneTodo,
+      List,
+    };
   },
 };
 </script>
