@@ -1,6 +1,6 @@
 <template>
   <div class="container pt-4">
-    <h2 class="text-lg font-bold mb-4">Todo Application</h2>
+    <h2 class="text-lg font-bold mb-4">Our List</h2>
     <div class="flex w-full">
       <input
         @keyup.enter="add"
@@ -16,7 +16,7 @@
       </button>
     </div>
     <List :todos="list" @deleteTodo="deleteTodo" @doneTodo="doneTodo" />
-    <small>Total TODO : {{ totalTodo }}</small>
+    <small>Total Todo : {{ totalTodo }}</small>
   </div>
 </template>
 
